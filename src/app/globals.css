@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #eef7ff;
+  --color-brand-100: #d9ecff;
+  --color-brand-200: #bcdcff;
+  --color-brand-300: #8ec6ff;
+  --color-brand-400: #59a6ff;
+  --color-brand-500: #3380fc;
+  --color-brand-600: #1d61f1;
+  --color-brand-700: #164ce0;
+  --color-brand-800: #183db5;
+  --color-brand-900: #1a388f;
+  --color-brand-950: #142357;
+
+  --color-accent-50: #fefce8;
+  --color-accent-100: #fef9c3;
+  --color-accent-200: #fef08a;
+  --color-accent-300: #fde047;
+  --color-accent-400: #facc15;
+  --color-accent-500: #eab308;
+  --color-accent-600: #ca8a04;
+  --color-accent-700: #a16207;
+  --color-accent-800: #854d0e;
+  --color-accent-900: #713f12;
+
+  --color-sand-50: #faf8f5;
+  --color-sand-100: #f3ede3;
+  --color-sand-200: #e6d8c4;
+  --color-sand-300: #d4bc9a;
+  --color-sand-400: #c19d70;
+  --color-sand-500: #b08454;
+  --color-sand-600: #9a6e47;
+  --color-sand-700: #7e573c;
+  --color-sand-800: #6b4836;
+  --color-sand-900: #5a3d2f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-sand-50);
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes gauge-fill {
+  from { width: 0%; }
+}
+
+.gauge-bar {
+  animation: gauge-fill 1s ease-out;
+}
