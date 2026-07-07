@@ -4,8 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useI18n } from "@/lib/i18n/context";
 import type { Product, Company, Category, ConsolidationPool } from "@/lib/types/database";
+import { COMPATIBILITY_LABELS } from "@/lib/types/database";
 import TrustBadge from "@/components/TrustBadge";
 import ConsolidationGauge from "@/components/ConsolidationGauge";
+import MessageThread from "@/components/MessageThread";
+import PlatformProtection from "@/components/PlatformProtection";
 
 export default function ProductDetailView({
   product,
@@ -84,25 +87,34 @@ export default function ProductDetailView({
 
           {/* Seller info */}
           {company && (
-            <div className="mt-4 flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-sm font-bold text-gray-600">
-                {company.name.charAt(0)}
+            <>
+              <div className="mt-4 flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-sm font-bold text-gray-600">
+                  {company.name.charAt(0)}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-gray-900">{company.name}</p>
+                  <p className="text-xs text-gray-500">{company.city}</p>
+                </div>
+                <TrustBadge
+                  verified={company.verified_on_site}
+                  rating={company.rating_avg}
+                  ratingCount={company.rating_count}
+                />
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-gray-900">{company.name}</p>
-                <p className="text-xs text-gray-500">{company.city}</p>
-              </div>
-              <TrustBadge
-                verified={company.verified_on_site}
-                rating={company.rating_avg}
-                ratingCount={company.rating_count}
-              />
-            </div>
+              {/* RFQ — négociation traçée sur la plateforme */}
+              <MessageThread productId={product.id} sellerCompanyId={company.id} />
+            </>
           )}
 
           {/* Badges */}
-          <div className="mt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-2">
             <TrustBadge reliable={product.reliability_badge} />
+            {product.compatibility_class && COMPATIBILITY_LABELS[product.compatibility_class] && (
+              <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${COMPATIBILITY_LABELS[product.compatibility_class].color}`}>
+                {COMPATIBILITY_LABELS[product.compatibility_class].icon} {COMPATIBILITY_LABELS[product.compatibility_class].fr}
+              </span>
+            )}
           </div>
 
           {/* Prices */}
@@ -121,9 +133,9 @@ export default function ProductDetailView({
               <p className="mt-1 text-xs text-gray-500">
                 {t("product.moq")}: {product.moq} {product.unit}s
               </p>
-              <button className="mt-3 w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 transition-colors">
+              <Link href={`/order/${product.id}`} className="mt-3 w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 transition-colors block text-center">
                 {t("product.buyFtl")}
-              </button>
+              </Link>
             </div>
 
             {/* LTL price */}
@@ -140,9 +152,9 @@ export default function ProductDetailView({
               <p className="mt-1 text-xs text-gray-500">
                 {t("product.moq")}: 1 {product.unit}
               </p>
-              <button className="mt-3 w-full rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-amber-600 transition-colors">
+              <Link href={`/order/${product.id}`} className="mt-3 w-full rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-amber-600 transition-colors block text-center">
                 {t("product.buyLtl")}
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -152,6 +164,11 @@ export default function ProductDetailView({
             <span className="font-medium text-gray-900">
               {availableStock.toLocaleString()} {product.unit}s {t("product.inStock")}
             </span>
+          </div>
+
+          {/* Protection plateforme */}
+          <div className="mt-4">
+            <PlatformProtection compact />
           </div>
         </div>
       </div>

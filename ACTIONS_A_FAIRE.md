@@ -15,7 +15,10 @@ Votre base est actuellement **ouverte en écriture à n'importe qui** possédant
 
 1. Ouvrez [supabase.com/dashboard](https://supabase.com/dashboard) → projet `mgjauqocfubhknfwftfd`.
 2. Menu gauche → **SQL Editor** → **New query**.
-3. Copiez tout le contenu de [`supabase/fix_rls.sql`](supabase/fix_rls.sql) et collez-le.
+3. Copiez tout le contenu de
+   [`supabase/migration_v2_securite_transactions.sql`](supabase/migration_v2_securite_transactions.sql)
+   et collez-le. (Ce script unique remplace les anciens `fix_rls.sql` et
+   `migration_antifuite.sql` : RLS corrigé + anti-fuite + commandes atomiques.)
 4. Cliquez **Run**.
 5. Le résultat final doit lister toutes les tables avec `rowsecurity = true`.
 
@@ -245,7 +248,7 @@ exactement ce à quoi un MVP sert.
 
 | # | Action | Où | Durée |
 |---|---|---|---|
-| 1 | Exécuter `supabase/fix_rls.sql` puis vérifier (401 en écriture, 200 en lecture) | Supabase SQL Editor | 10 min |
+| 1 | Exécuter `supabase/migration_v2_securite_transactions.sql` puis vérifier (4xx en écriture anonyme, 200 en lecture catalogue) | Supabase SQL Editor | 10 min |
 | 2 | Passer le dépôt GitHub en privé | GitHub Settings | 2 min |
 | 3 | Vérifier que la clé `service_role` n'a jamais fuité (sinon rotation) | Supabase Settings → API | 10 min |
 | 4 | Lancer les rendez-vous : avocat Djibouti/Éthiopie + banque escrow | Terrain | démarrer cette semaine |

@@ -131,7 +131,8 @@ create policy "Sellers can manage own products"
   on products for all using (
     exists (
       select 1 from companies c
-      where c.id = products.seller_id and c.owner_id = auth.uid()
+      join profiles p on p.id = c.owner_id
+      where c.id = products.seller_id and p.auth_user_id = auth.uid()
     )
   );
 

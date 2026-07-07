@@ -30,6 +30,16 @@ export type Incoterm = "EXW" | "FCA" | "DAP";
 
 export type FreightStatus = "open" | "assigned" | "completed" | "cancelled";
 
+export type CompatibilityClass =
+  | "food"
+  | "chemical_safe"
+  | "chemical_haz"
+  | "electronics"
+  | "textile"
+  | "general";
+
+export type PoolType = "by_product" | "by_destination";
+
 export interface Profile {
   id: string;
   email: string;
@@ -68,6 +78,7 @@ export interface Category {
   name_am: string;
   name_ar: string;
   icon: string | null;
+  compatibility_class: CompatibilityClass;
 }
 
 export interface Product {
@@ -93,6 +104,7 @@ export interface Product {
   currency: string;
   is_active: boolean;
   reliability_badge: boolean;
+  compatibility_class: CompatibilityClass;
   created_at: string;
   updated_at: string;
 }
@@ -121,6 +133,9 @@ export interface ConsolidationPool {
   destination_city: string;
   product_category_compatible: string;
   status: PoolStatus;
+  pool_type: PoolType;
+  compatibility_class: CompatibilityClass | null;
+  product_id: string | null;
   max_weight_kg: number;
   max_volume_m3: number;
   current_weight_kg: number;
@@ -128,6 +143,19 @@ export interface ConsolidationPool {
   fill_pct: number;
   deadline: string;
   estimated_departure: string | null;
+  max_deadline_days: number;
+  created_at: string;
+}
+
+export interface PoolMember {
+  id: string;
+  pool_id: string;
+  order_id: string | null;
+  product_id: string;
+  buyer_id: string;
+  qty: number;
+  weight_kg: number;
+  volume_m3: number;
   created_at: string;
 }
 
@@ -193,4 +221,26 @@ export interface Dispute {
   resolution: string | null;
   created_at: string;
   resolved_at: string | null;
+}
+
+export const COMPATIBILITY_LABELS: Record<CompatibilityClass, { fr: string; en: string; icon: string; color: string }> = {
+  food: { fr: "Alimentaire", en: "Food", icon: "🍚", color: "bg-green-100 text-green-700" },
+  chemical_safe: { fr: "Chimique non-dangereux", en: "Chemical (safe)", icon: "🧴", color: "bg-blue-100 text-blue-700" },
+  chemical_haz: { fr: "Chimique dangereux", en: "Hazardous", icon: "⚠️", color: "bg-red-100 text-red-700" },
+  electronics: { fr: "Électronique", en: "Electronics", icon: "📱", color: "bg-purple-100 text-purple-700" },
+  textile: { fr: "Textile", en: "Textile", icon: "👕", color: "bg-amber-100 text-amber-700" },
+  general: { fr: "Général", en: "General", icon: "📦", color: "bg-gray-100 text-gray-700" },
+};
+
+export const COMPATIBLE_CLASSES: Record<CompatibilityClass, CompatibilityClass[]> = {
+  food: ["food"],
+  chemical_haz: ["chemical_haz"],
+  chemical_safe: ["chemical_safe", "general", "electronics", "textile"],
+  electronics: ["electronics", "textile", "general", "chemical_safe"],
+  textile: ["textile", "electronics", "general", "chemical_safe"],
+  general: ["general", "electronics", "textile", "chemical_safe"],
+};
+
+export function areCompatible(a: CompatibilityClass, b: CompatibilityClass): boolean {
+  return COMPATIBLE_CLASSES[a].includes(b);
 }

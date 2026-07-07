@@ -27,8 +27,16 @@ npm run dev                  # http://localhost:3000
 
 1. `supabase/schema.sql` — tables, types, index, triggers, catégories de base
 2. `supabase/seed.sql` — données de démonstration (vendeurs, produits, pools de groupage)
-3. `supabase/fix_rls.sql` — **obligatoire** : réactive le Row Level Security avec les politiques
-   corrigées. Sans lui, la base est ouverte en écriture anonyme.
+3. `supabase/migration_groupage_hybrid.sql` — pools par produit/destination, classes de
+   compatibilité, membres de pool
+4. `supabase/migration_v2_securite_transactions.sql` — **obligatoire** : RLS corrigé +
+   anti-fuite (coordonnées verrouillées, messagerie masquée côté serveur) + RPC de commande
+   atomique. Sans lui, la base est ouverte en écriture anonyme.
+5. `supabase/create_storage_bucket.sql` — bucket public des images produits
+6. `supabase/create_test_users.sql` — comptes de démonstration (optionnel)
+
+La stratégie anti-contournement complète est décrite dans
+[STRATEGIE_ANTIFUITE.md](STRATEGIE_ANTIFUITE.md).
 
 ## Structure
 
@@ -51,9 +59,11 @@ supabase/                 # schéma SQL, seed, politiques RLS
 ## État d'avancement (phase 1 du CONCEPT)
 
 - [x] Catalogue avec stocks temps réel et double grille de prix (FTL / LTL)
-- [x] Pools de groupage avec jauge de remplissage
+- [x] Pools de groupage hybrides (par produit / par destination) avec jauge et classes de compatibilité
 - [x] Multilingue FR / EN / AM / AR
 - [x] Schéma complet : commandes, expéditions, offres de fret, documents, litiges, audit
-- [ ] Authentification (Supabase Auth) et espaces vendeur / acheteur / transporteur
-- [ ] Tunnel de commande avec séquestre (escrow) orchestré
-- [ ] Bourse de fret active et tracking
+- [x] Authentification (Supabase Auth), tableau de bord vendeur, ajout de produits avec upload d'images
+- [x] Tunnel de commande atomique (RPC serveur : prix, réservation 48 h, rattachement au pool)
+- [x] Anti-contournement : coordonnées verrouillées, messagerie RFQ masquée côté serveur, protection FreeZone
+- [ ] Paiement séquestre réel (banque partenaire) et libération des fonds
+- [ ] Bourse de fret active et tracking transporteur

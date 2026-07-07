@@ -3,17 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/lib/i18n/context";
+import { useAuth } from "@/lib/auth/context";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Header() {
   const { t } = useI18n();
   const pathname = usePathname();
+  const { user, profile, signOut } = useAuth();
 
   const navItems = [
     { href: "/", label: t("nav.home") },
     { href: "/catalog", label: t("nav.catalog") },
     { href: "/groupage", label: t("nav.groupage") },
     { href: "/freight", label: t("nav.freight") },
+    { href: "/how-it-works", label: t("nav.howItWorks") },
   ];
 
   return (
@@ -52,18 +55,37 @@ export default function Header() {
         {/* Right actions */}
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
-          <Link
-            href="/login"
-            className="hidden rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 sm:block"
-          >
-            {t("nav.login")}
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 transition-colors"
-          >
-            {t("nav.register")}
-          </Link>
+          {user ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="hidden rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 sm:block"
+              >
+                {t("nav.dashboard")}
+              </Link>
+              <button
+                onClick={() => signOut()}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              >
+                {t("auth.logout")}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="hidden rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 sm:block"
+              >
+                {t("nav.login")}
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 transition-colors"
+              >
+                {t("nav.register")}
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
