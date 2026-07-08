@@ -10,12 +10,12 @@ import PlatformProtection from "@/components/PlatformProtection";
 
 const statusSteps: { key: Order["status"]; label: string; icon: string }[] = [
   { key: "created", label: "order.status.created", icon: "📝" },
-  { key: "escrow_funded", label: "order.status.escrowFunded", icon: "🔒" },
+  { key: "escrow_funded", label: "order.status.escrow_funded", icon: "🔒" },
   { key: "preparing", label: "order.status.preparing", icon: "📦" },
   { key: "loaded", label: "order.status.loaded", icon: "🚚" },
-  { key: "in_transit", label: "order.status.inTransit", icon: "🛣️" },
+  { key: "in_transit", label: "order.status.in_transit", icon: "🛣️" },
   { key: "delivered", label: "order.status.delivered", icon: "✓" },
-  { key: "funds_released", label: "order.status.fundsReleased", icon: "💰" },
+  { key: "funds_released", label: "order.status.funds_released", icon: "💰" },
 ];
 
 export default function OrderDetailPage({
@@ -24,11 +24,13 @@ export default function OrderDetailPage({
   orderId: string;
 }) {
   const { t } = useI18n();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const supabase = createClient();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [acting, setActing] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -42,6 +44,32 @@ export default function OrderDetailPage({
     };
     fetchOrder();
   }, [orderId, supabase]);
+
+  // Toutes les transitions de statut passent par des RPC serveur qui
+  // vérifient le rôle (acheteur/vendeur) et la transition autorisée.
+  const runAction = async (fn: string, args: Record<string, unknown> = {}) => {
+    setActing(true);
+    setActionError(null);
+    const { error } = await supabase.rpc(fn, { p_order_id: orderId, ...args });
+    if (error) {
+      setActionError(error.message);
+    } else {
+      const { data } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("id", orderId)
+        .single();
+      if (data) setOrder(data as Order);
+    }
+    setActing(false);
+  };
+
+  const handleDispute = () => {
+    const reason = window.prompt(t("order.disputeReason"));
+    if (reason && reason.trim().length >= 10) {
+      runAction("open_dispute", { p_reason: reason.trim() });
+    }
+  };
 
   if (loading) {
     return (
@@ -151,24 +179,72 @@ export default function OrderDetailPage({
         </div>
       )}
 
-      {/* Actions */}
-      <div className="mt-8 flex gap-3">
-        {order.status === "created" && (
-          <button className="rounded-xl bg-brand-600 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-700 transition-colors">
-            {t("order.fundEscrow")}
-          </button>
-        )}
-        {order.status === "delivered" && (
-          <button className="rounded-xl bg-green-600 px-6 py-3 text-sm font-semibold text-white hover:bg-green-700 transition-colors">
-            {t("order.confirmDelivery")}
-          </button>
-        )}
-        {!isCancelled && !isDisputed && order.status !== "funds_released" && (
-          <button className="rounded-xl border border-red-200 px-6 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors">
-            {t("order.dispute")}
-          </button>
-        )}
-      </div>
+      {actionError && (
+        <div className="mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          {actionError}
+        </div>
+      )}
+
+      {/* Actions — le serveur revérifie rôle et transition à chaque appel */}
+      {(() => {
+        const isBuyer = !!profile && order.buyer_id === profile.id;
+        const isSeller = profile?.role === "seller" && !isBuyer;
+        const sellerCanAdvance =
+          isSeller &&
+          ["escrow_funded", "preparing", "loaded", "in_transit"].includes(order.status);
+
+        return (
+          <div className="mt-8 flex flex-wrap gap-3">
+            {isBuyer && order.status === "created" && (
+              <>
+                <button
+                  onClick={() => runAction("fund_escrow")}
+                  disabled={acting}
+                  className="rounded-xl bg-brand-600 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50 transition-colors"
+                >
+                  {acting ? t("common.loading") : t("order.fundEscrow")}
+                </button>
+                <button
+                  onClick={() => runAction("cancel_order")}
+                  disabled={acting}
+                  className="rounded-xl border border-gray-200 px-6 py-3 text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                >
+                  {t("order.cancel")}
+                </button>
+              </>
+            )}
+            {sellerCanAdvance && (
+              <button
+                onClick={() => runAction("seller_advance_order")}
+                disabled={acting}
+                className="rounded-xl bg-brand-600 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50 transition-colors"
+              >
+                {acting ? t("common.loading") : t("order.advance")}
+              </button>
+            )}
+            {isBuyer && order.status === "delivered" && (
+              <button
+                onClick={() => runAction("confirm_delivery")}
+                disabled={acting}
+                className="rounded-xl bg-green-600 px-6 py-3 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50 transition-colors"
+              >
+                {acting ? t("common.loading") : t("order.confirmDelivery")}
+              </button>
+            )}
+            {!isCancelled &&
+              !isDisputed &&
+              !["created", "funds_released"].includes(order.status) && (
+                <button
+                  onClick={handleDispute}
+                  disabled={acting}
+                  className="rounded-xl border border-red-200 px-6 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+                >
+                  {t("order.dispute")}
+                </button>
+              )}
+          </div>
+        );
+      })()}
     </div>
   );
 }

@@ -275,6 +275,35 @@ const fr: Dict = {
   "rfq.contactUnlocked": "Contact débloqué — commande séquestrée en cours avec ce vendeur.",
   "rfq.flaggedMine": "Coordonnées masquées pour le destinataire",
   "rfq.leakWarning": "Le partage de coordonnées est masqué jusqu'au paiement séquestré. Les transactions hors plateforme ne bénéficient d'aucune protection FreeZone.",
+
+  "trust.score": "Score de confiance",
+  "trust.level.gold": "Or",
+  "trust.level.silver": "Argent",
+  "trust.level.bronze": "Bronze",
+  "trust.level.new": "Nouveau vendeur",
+  "trust.rating": "Avis clients",
+  "trust.orders": "Commandes menées à bien",
+  "trust.seniority": "Ancienneté",
+  "trust.months": "mois",
+  "trust.response.fast": "Répond en moins de 4 h",
+  "trust.response.day": "Répond en moins de 24 h",
+  "trust.response.slow": "Répond sous plus de 72 h",
+  "trust.response.none": "Pas encore de données de réponse",
+  "trust.disputes": "Litiges",
+  "trust.downInfo": "Ce score évolue automatiquement : il monte avec les commandes réussies sur la plateforme et baisse en cas de litiges ou de tentatives de contournement.",
+
+  "loyalty.title": "Palier de fidélité",
+  "loyalty.tier.bronze": "Bronze",
+  "loyalty.tier.silver": "Argent",
+  "loyalty.tier.gold": "Or",
+  "loyalty.tier.platinum": "Platine",
+  "loyalty.commission": "Commission",
+  "loyalty.groupage": "groupage",
+  "loyalty.nextTier": "Encore {amount} de volume traité sur la plateforme pour atteindre le palier {tier}",
+
+  "order.advance": "Passer à l'étape suivante",
+  "order.cancel": "Annuler la commande",
+  "order.disputeReason": "Décrivez le problème rencontré (10 caractères minimum) :",
 };
 
 const en: Dict = {
@@ -533,6 +562,35 @@ const en: Dict = {
   "rfq.contactUnlocked": "Contact unlocked — escrowed order in progress with this seller.",
   "rfq.flaggedMine": "Contact details masked for the recipient",
   "rfq.leakWarning": "Contact sharing is masked until escrow payment. Off-platform transactions get no FreeZone protection.",
+
+  "trust.score": "Trust score",
+  "trust.level.gold": "Gold",
+  "trust.level.silver": "Silver",
+  "trust.level.bronze": "Bronze",
+  "trust.level.new": "New seller",
+  "trust.rating": "Customer reviews",
+  "trust.orders": "Completed orders",
+  "trust.seniority": "Seniority",
+  "trust.months": "months",
+  "trust.response.fast": "Replies within 4h",
+  "trust.response.day": "Replies within 24h",
+  "trust.response.slow": "Replies in 72h+",
+  "trust.response.none": "No response data yet",
+  "trust.disputes": "Disputes",
+  "trust.downInfo": "This score updates automatically: it rises with successful on-platform orders and drops with disputes or circumvention attempts.",
+
+  "loyalty.title": "Loyalty tier",
+  "loyalty.tier.bronze": "Bronze",
+  "loyalty.tier.silver": "Silver",
+  "loyalty.tier.gold": "Gold",
+  "loyalty.tier.platinum": "Platinum",
+  "loyalty.commission": "Commission",
+  "loyalty.groupage": "groupage",
+  "loyalty.nextTier": "{amount} more on-platform volume to reach the {tier} tier",
+
+  "order.advance": "Move to next step",
+  "order.cancel": "Cancel order",
+  "order.disputeReason": "Describe the issue (minimum 10 characters):",
 };
 
 const am: Dict = {
@@ -791,6 +849,35 @@ const am: Dict = {
   "rfq.contactUnlocked": "ግንኙነት ተከፍቷል — ከዚህ ሻጭ ጋር የተያዘ ትዕዛዝ አለ።",
   "rfq.flaggedMine": "የግንኙነት መረጃ ለተቀባዩ ተደብቋል",
   "rfq.leakWarning": "የግንኙነት መረጃ ማጋራት ክፍያ እስኪያዝ ድረስ ይደበቃል። ከመድረኩ ውጭ ግብይቶች ምንም ጥበቃ የላቸውም።",
+
+  "trust.score": "የመተማመኛ ነጥብ",
+  "trust.level.gold": "ወርቅ",
+  "trust.level.silver": "ብር",
+  "trust.level.bronze": "ነሐስ",
+  "trust.level.new": "አዲስ ሻጭ",
+  "trust.rating": "የደንበኞች ግምገማ",
+  "trust.orders": "የተጠናቀቁ ትዕዛዞች",
+  "trust.seniority": "አገልግሎት ጊዜ",
+  "trust.months": "ወራት",
+  "trust.response.fast": "በ4 ሰዓት ውስጥ ይመልሳል",
+  "trust.response.day": "በ24 ሰዓት ውስጥ ይመልሳል",
+  "trust.response.slow": "ከ72 ሰዓት በላይ ይመልሳል",
+  "trust.response.none": "የመልስ መረጃ ገና የለም",
+  "trust.disputes": "ክርክሮች",
+  "trust.downInfo": "ይህ ነጥብ በራስ-ሰር ይለወጣል፦ በመድረኩ ላይ በተሳኩ ትዕዛዞች ይጨምራል፣ በክርክሮች ወይም በማለፍ ሙከራዎች ይቀንሳል።",
+
+  "loyalty.title": "የታማኝነት ደረጃ",
+  "loyalty.tier.bronze": "ነሐስ",
+  "loyalty.tier.silver": "ብር",
+  "loyalty.tier.gold": "ወርቅ",
+  "loyalty.tier.platinum": "ፕላቲነም",
+  "loyalty.commission": "ኮሚሽን",
+  "loyalty.groupage": "ማጠራቀም",
+  "loyalty.nextTier": "ወደ {tier} ደረጃ ለመድረስ {amount} ተጨማሪ የግብይት መጠን ያስፈልጋል",
+
+  "order.advance": "ወደ ቀጣዩ ደረጃ",
+  "order.cancel": "ትዕዛዙን ሰርዝ",
+  "order.disputeReason": "ያጋጠመዎትን ችግር ይግለጹ (ቢያንስ 10 ፊደላት)፦",
 };
 
 const ar: Dict = {
@@ -1049,6 +1136,35 @@ const ar: Dict = {
   "rfq.contactUnlocked": "تم فتح التواصل — طلب مضمون جارٍ مع هذا البائع.",
   "rfq.flaggedMine": "أُخفيت بيانات الاتصال عن المستلم",
   "rfq.leakWarning": "مشاركة بيانات الاتصال تُخفى حتى دفع الإسكرو. المعاملات خارج المنصة لا تتمتع بأي حماية.",
+
+  "trust.score": "درجة الثقة",
+  "trust.level.gold": "ذهبي",
+  "trust.level.silver": "فضي",
+  "trust.level.bronze": "برونزي",
+  "trust.level.new": "بائع جديد",
+  "trust.rating": "تقييمات العملاء",
+  "trust.orders": "الطلبات المكتملة",
+  "trust.seniority": "الأقدمية",
+  "trust.months": "أشهر",
+  "trust.response.fast": "يرد خلال 4 ساعات",
+  "trust.response.day": "يرد خلال 24 ساعة",
+  "trust.response.slow": "يرد بعد أكثر من 72 ساعة",
+  "trust.response.none": "لا توجد بيانات رد بعد",
+  "trust.disputes": "النزاعات",
+  "trust.downInfo": "تتحدث هذه الدرجة تلقائياً: ترتفع مع الطلبات الناجحة عبر المنصة وتنخفض مع النزاعات أو محاولات الالتفاف.",
+
+  "loyalty.title": "مستوى الولاء",
+  "loyalty.tier.bronze": "برونزي",
+  "loyalty.tier.silver": "فضي",
+  "loyalty.tier.gold": "ذهبي",
+  "loyalty.tier.platinum": "بلاتيني",
+  "loyalty.commission": "العمولة",
+  "loyalty.groupage": "التجميع",
+  "loyalty.nextTier": "يلزم {amount} إضافية من حجم المعاملات عبر المنصة للوصول إلى مستوى {tier}",
+
+  "order.advance": "الانتقال إلى الخطوة التالية",
+  "order.cancel": "إلغاء الطلب",
+  "order.disputeReason": "صف المشكلة (10 أحرف على الأقل):",
 };
 
 export const translations: Record<Locale, Dict> = { fr, en, am, ar };

@@ -23,6 +23,21 @@ Une plateforme qui ne fait que bloquer pousse les utilisateurs à partir. L'ordr
 2. **De la friction sur la fuite** (défensif)
 3. **Des sanctions** (dernier recours)
 
+## La combinaison gagnante — 7 verrous qui se renforcent mutuellement
+
+| # | Verrou | Origine | Effet |
+|---|---|---|---|
+| 1 | **Escrow + cycle de commande complet** (séquestre → livraison → libération) | Alibaba Trade Assurance | La sécurité de paiement n'existe que sur la plateforme |
+| 2 | **Coordonnées verrouillées** jusqu'au séquestre payé | Airbnb / Upwork | Impossible de se contacter en direct avant d'avoir payé au moins une fois |
+| 3 | **Messagerie masquée côté serveur** + journalisation des tentatives | Upwork / Fiverr | La négociation reste traçable ; la fuite laisse des preuves |
+| 4 | **Score de confiance dynamique** (monte ET descend) | Alibaba / Upwork JSS | La réputation est un actif captif que la fuite dégrade |
+| 5 | **Classement du catalogue par score** | Amazon Buy Box | La visibilité — donc les ventes futures — récompense le volume ON-platform |
+| 6 | **Commission dégressive par paliers** | Faire / places B2B | Plus on transige ici, moins la commission pèse : contourner fait perdre son palier |
+| 7 | **Groupage structurellement captif** (pools, jauges, camion partagé) | modèle propre FreeZone | Le petit importateur ne peut physiquement pas répliquer le service seul |
+
+Chaque verrou seul est contournable ; ensemble, ils font que la commission coûte moins cher
+que ce qu'on perd en partant : protection, réputation, visibilité, palier et accès au camion.
+
 ---
 
 ## 1. La valeur impossible à répliquer hors plateforme
@@ -58,6 +73,27 @@ Un avis ne peut être déposé que sur une commande réellement séquestrée (st
 - Un acheteur sans historique n'obtient ni plafonds élevés ni (phase 2) conditions de paiement.
 - Le classement du catalogue favorisera les vendeurs à fort volume ON-platform : la visibilité
   elle-même devient la récompense.
+
+### 1.3 bis Le score de confiance dynamique (implémenté — migration v3)
+Modèle Alibaba « Supplier Assessment » / Upwork « Job Success Score » : un score 0–100
+recalculé en continu par la vue `company_trust_scores`, affiché sur chaque fiche produit
+(composant `TrustScore`, niveaux Or ≥ 80 / Argent ≥ 60 / Bronze ≥ 40 / Nouveau) :
+
+| Composante | Points | Signal |
+|---|---|---|
+| Avis clients (moyenne/5) | jusqu'à 35 | qualité perçue |
+| Commandes menées à bien | jusqu'à 20 | volume d'actions réussies |
+| Ancienneté (plafond 24 mois) | jusqu'à 10 | stabilité |
+| Vérification sur site | 10 | réalité physique de l'entreprise |
+| Réactivité messagerie | jusqu'à 15 | vitesse de réponse au premier message |
+| Badge fiabilité stock | 10 | stock affiché = stock réel |
+| **Litiges** | **jusqu'à −15** | proportionnel au taux de litige |
+| **Tentatives de fuite (90 j)** | **jusqu'à −20** | −5 par message signalé |
+
+Le point clé : **le score baisse**. Contacter les acheteurs hors plateforme dégrade
+mécaniquement la visibilité et la crédibilité du vendeur — l'actif réputationnel est captif.
+Les avis alimentent désormais réellement la note (`rating_avg` recalculée par trigger), et le
+volume libéré alimente le palier de fidélité.
 
 ### 1.4 La logistique intégrée (implémenté partiellement)
 Tracking, transporteurs vérifiés, documents douaniers rattachés à la commande. Hors plateforme,
@@ -138,4 +174,8 @@ Indicateurs à suivre dès le lancement (les données existent déjà) :
 | Commande atomique serveur (prix, stock, pool) | ⚠️ idem — même script |
 | Avis réservés aux transactions séquestrées | ⚠️ idem — même script |
 | Groupage captif (pools + jauges + rattachement auto) | ✅ implémenté (rattachement via la RPC) |
-| Commissions dégressives, paiement différé, sanctions | 🔜 phase 2 |
+| Score de confiance dynamique (monte ET descend) | ⚠️ code prêt — **exécuter `supabase/migration_v3_score_confiance.sql`** |
+| Cycle de commande complet (financer, avancer, confirmer, litige, annuler) | ⚠️ idem — même script v3 |
+| Classement du catalogue par score de confiance | ✅ implémenté (tri par défaut) |
+| Paliers de commission dégressive (affichage tableau de bord vendeur) | ✅ affiché — application à la facturation en phase 2 |
+| Paiement différé, sanctions graduées | 🔜 phase 2 |

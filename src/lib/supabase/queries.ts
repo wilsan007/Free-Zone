@@ -145,7 +145,34 @@ export async function getProducts(filters?: {
     return [];
   }
 
-  return data as Product[];
+  let products = data as Product[];
+
+  // Classement par score de confiance (défaut et tri « rating ») : la
+  // visibilité dans le catalogue récompense les vendeurs qui transigent
+  // SUR la plateforme — pilier de la stratégie anti-contournement.
+  if (!filters?.sortBy || filters.sortBy === "recent" || filters.sortBy === "rating") {
+    const sellerIds = [...new Set(products.map((p) => p.seller_id))];
+    if (sellerIds.length > 1) {
+      const { data: scores } = await supabase
+        .from("company_trust_scores")
+        .select("company_id,score")
+        .in("company_id", sellerIds);
+      if (scores && scores.length > 0) {
+        const scoreMap = new Map(
+          (scores as { company_id: string; score: number }[]).map((s) => [
+            s.company_id,
+            s.score,
+          ])
+        );
+        products = [...products].sort(
+          (a, b) =>
+            (scoreMap.get(b.seller_id) ?? 0) - (scoreMap.get(a.seller_id) ?? 0)
+        );
+      }
+    }
+  }
+
+  return products;
 }
 
 export async function getProductById(id: string): Promise<Product | null> {

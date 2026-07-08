@@ -6,6 +6,7 @@ import { useI18n } from "@/lib/i18n/context";
 import { useAuth } from "@/lib/auth/context";
 import { createClient } from "@/lib/supabase/client";
 import type { Product, Order } from "@/lib/types/database";
+import LoyaltyTier from "@/components/LoyaltyTier";
 
 export default function DashboardView() {
   const { t } = useI18n();
@@ -14,6 +15,7 @@ export default function DashboardView() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [companyVolume, setCompanyVolume] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"overview" | "products" | "orders">("overview");
 
@@ -37,7 +39,7 @@ export default function DashboardView() {
 
       const { data: company } = await supabase
         .from("companies")
-        .select("id")
+        .select("id,total_volume_usd")
         .eq("owner_id", prof.id)
         .single();
 
@@ -45,6 +47,8 @@ export default function DashboardView() {
         setLoading(false);
         return;
       }
+
+      setCompanyVolume(company.total_volume_usd ?? 0);
 
       const [productsRes, ordersRes] = await Promise.all([
         supabase.from("products").select("*").eq("seller_id", company.id).order("created_at", { ascending: false }),
@@ -151,6 +155,11 @@ export default function DashboardView() {
             <p className="mt-3 text-2xl font-bold text-gray-900">${totalRevenue.toLocaleString()}</p>
             <p className="text-sm text-gray-500">{t("dashboard.totalRevenue")}</p>
           </div>
+          {/* Palier de fidélité : commission dégressive avec le volume traité
+              sur la plateforme — l'incitation économique anti-contournement */}
+          {profile?.role === "seller" && companyVolume !== null && (
+            <LoyaltyTier volumeUsd={companyVolume} />
+          )}
         </div>
       )}
 

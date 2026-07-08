@@ -9,6 +9,7 @@ import TrustBadge from "@/components/TrustBadge";
 import ConsolidationGauge from "@/components/ConsolidationGauge";
 import MessageThread from "@/components/MessageThread";
 import PlatformProtection from "@/components/PlatformProtection";
+import TrustScore from "@/components/TrustScore";
 
 export default function ProductDetailView({
   product,
@@ -102,6 +103,8 @@ export default function ProductDetailView({
                   ratingCount={company.rating_count}
                 />
               </div>
+              {/* Score de confiance dynamique (monte et descend) */}
+              <TrustScore companyId={company.id} />
               {/* RFQ — négociation traçée sur la plateforme */}
               <MessageThread productId={product.id} sellerCompanyId={company.id} />
             </>

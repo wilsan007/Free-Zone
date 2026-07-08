@@ -32,8 +32,10 @@ npm run dev                  # http://localhost:3000
 4. `supabase/migration_v2_securite_transactions.sql` — **obligatoire** : RLS corrigé +
    anti-fuite (coordonnées verrouillées, messagerie masquée côté serveur) + RPC de commande
    atomique. Sans lui, la base est ouverte en écriture anonyme.
-5. `supabase/create_storage_bucket.sql` — bucket public des images produits
-6. `supabase/create_test_users.sql` — comptes de démonstration (optionnel)
+5. `supabase/migration_v3_score_confiance.sql` — score de confiance dynamique des vendeurs
+   (vue `company_trust_scores` + triggers avis/volume)
+6. `supabase/create_storage_bucket.sql` — bucket public des images produits
+7. `supabase/create_test_users.sql` — comptes de démonstration (optionnel)
 
 La stratégie anti-contournement complète est décrite dans
 [STRATEGIE_ANTIFUITE.md](STRATEGIE_ANTIFUITE.md).
@@ -65,5 +67,6 @@ supabase/                 # schéma SQL, seed, politiques RLS
 - [x] Authentification (Supabase Auth), tableau de bord vendeur, ajout de produits avec upload d'images
 - [x] Tunnel de commande atomique (RPC serveur : prix, réservation 48 h, rattachement au pool)
 - [x] Anti-contournement : coordonnées verrouillées, messagerie RFQ masquée côté serveur, protection FreeZone
+- [x] Score de confiance dynamique (avis, volume, ancienneté, réactivité — malus litiges et fuites) + paliers de commission dégressive
 - [ ] Paiement séquestre réel (banque partenaire) et libération des fonds
 - [ ] Bourse de fret active et tracking transporteur
